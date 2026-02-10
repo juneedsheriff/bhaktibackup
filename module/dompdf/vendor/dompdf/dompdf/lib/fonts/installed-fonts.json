@@ -1,0 +1,10 @@
+{
+    "caveat": {
+        "normal": "\/home3\/webte7nz\/bhakti-v1.webtechsoftwaresolutions.com\/module\/dompdf\/vendor\/dompdf\/dompdf\/lib\/fonts\/caveat_normal_076a6104ee1589ee5d7c13000621c128",
+        "600": "\/home3\/webte7nz\/bhakti-v1.webtechsoftwaresolutions.com\/module\/dompdf\/vendor\/dompdf\/dompdf\/lib\/fonts\/caveat_600_c553e5a43bdd9fb1458a90f07e77fc33",
+        "bold": "caveat_bold_e9d2287785d16b2f740a46f58c032a09"
+    },
+    "tiro devanagari hindi": {
+        "normal": "tiro_devanagari_hindi_normal_3aee99a8ffab1f31c32d289f3d910262"
+    }
+}
