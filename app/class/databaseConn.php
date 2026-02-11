@@ -2,11 +2,11 @@
 session_start();
 define('DB_HOST', 'localhost');
 
-define('DB_USER', 'webte7nz_bkti2k25');
+define('DB_USER', 'bhakti');
 
-define('DB_PASSWORD', 'JrcU#Lj2qSN.');
+define('DB_PASSWORD', 'bhakti123@');
 
-define('DB_DATABASE', 'webte7nz_bhakti');
+define('DB_DATABASE', 'bhakti');
 class DatabaseConn
 {
 	var $dbLink;

@@ -207,9 +207,17 @@ if ($_REQUEST['id'] > 0) {
                                         </div>
                                         <div class="col-sm-4 mb-3">
                                             <label>Featured Image</label>
+                                            <?php if (!empty($_REQUEST['id']) && isset($Row) && !empty($Row->photos)): ?>
+                                            <div class="mb-2">
+                                                <span class="d-block small text-muted mb-1">Current image:</span>
+                                                <a href="./uploads/iconic/<?php echo htmlspecialchars($Row->photos); ?>" target="_blank" class="d-inline-block">
+                                                    <img src="./uploads/iconic/<?php echo htmlspecialchars($Row->photos); ?>" alt="Featured" class="img-thumbnail" style="max-width:120px;max-height:120px;object-fit:contain;">
+                                                </a>
+                                                <p class="small text-muted mb-0 mt-1">Choose a new file below to replace.</p>
+                                            </div>
+                                            <?php endif; ?>
                                             <div class="col-sm-6 mb-3">
                                                 <div class="field">
-                                                    <!-- <label class="pull-left">image </label> -->
                                                     <div class="custom-file">
                                                         <input class="fileUp fileup-sm uploadlink" type="file" name="photos" id="photos" accept=".jpg, .png, image/jpeg, image/png" multiple="" value="" <?php if ($titl == "Add New ") { echo 'required=""';} ?>>
                                                         <label class="custom-file-label" for="photos" style="font-size: 13px;">Recommended to 250 x 250 px (png, jpg, jpeg).</label>
@@ -219,14 +227,22 @@ if ($_REQUEST['id'] > 0) {
                                         </div>
                                         <div class="col-sm-4 mb-3">
                                             <label>Banner Image </label>
+                                            <?php if (!empty($_REQUEST['id']) && isset($Row) && !empty($Row->banner)): ?>
+                                            <div class="mb-2">
+                                                <span class="d-block small text-muted mb-1">Current image:</span>
+                                                <a href="./uploads/iconic/banner/<?php echo htmlspecialchars($Row->banner); ?>" target="_blank" class="d-inline-block">
+                                                    <img src="./uploads/iconic/banner/<?php echo htmlspecialchars($Row->banner); ?>" alt="Banner" class="img-thumbnail" style="max-width:120px;max-height:120px;object-fit:contain;">
+                                                </a>
+                                                <p class="small text-muted mb-0 mt-1">Choose a new file below to replace.</p>
+                                            </div>
+                                            <?php endif; ?>
                                             <div class="col-sm-6 mb-3">
                                                 <div class="field">
-                                                    <!-- <label class="pull-left">image </label> -->
                                                     <div class="custom-file">
-                                                        <input class="fileUp fileup-sm uploadlink" type="file" name="banner" id="photos" accept=".jpg, .png, image/jpeg, image/png" multiple="" value="" <?php if ($titl == "Add New ") {
+                                                        <input class="fileUp fileup-sm uploadlink" type="file" name="banner" id="banner" accept=".jpg, .png, image/jpeg, image/png" multiple="" value="" <?php if ($titl == "Add New ") {
                                                                                                                                                                                                                 echo 'required=""';
                                                                                                                                                                                                             } ?>>
-                                                        <label class="custom-file-label" for="photos"></label>
+                                                        <label class="custom-file-label" for="banner"></label>
                                                     </div>
                                                 </div>
                                             </div>
