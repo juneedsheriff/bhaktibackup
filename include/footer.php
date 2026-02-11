@@ -1,10 +1,6 @@
 <?php
 $select = "SELECT * FROM `private_ads` WHERE is_active = 1 ORDER BY sort_order ASC";
 $SQL_STATEMENT = mysqli_query($DatabaseCo->dbLink, $select);
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
-$csrf_token = $_SESSION['csrf_token'];
 ?>
 <section class="ad-section">
     <div class="container">
@@ -66,82 +62,15 @@ $csrf_token = $_SESSION['csrf_token'];
     display: block;
     width: 100%;
     border-radius: 8px;
-}
-</style>
-<div class="correction-box">
-    <div class="container">
-
     
-    <p class="btn-show-correction-form">Please send your corrections</p>
-
-    <form id="correctionForm" style="display:none;">
-    <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
-    <input type="hidden" name="page_url" id="page_url" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?>">
-
-    <div class="row">
-        <div class="col-md-4">
-            <label>Your Name</label>
-            <input type="text" name="user_name" class="form-control" required>
-        </div>
-
-        <div class="col-md-4">
-            <label>Email</label>
-            <input type="email" name="user_email" class="form-control" required>
-        </div>
-
-        <div class="col-md-4">
-            <label>Phone</label>
-            <input type="text" name="user_phone" class="form-control" required>
-        </div>
-    </div>
-
-    <br>
-
-    <label>Correction Details</label>
-    <textarea name="correction_details" class="form-control" rows="4" required></textarea>
-
-    <br>
-
-    <button type="submit" class="btn btn-primary">Submit Correction</button>
-</form>
-
-<div id="correctionResponse" class="mt-3 fw-bold"></div>
-
-
-    <div id="correctionResponse" style="margin-top:15px; font-weight:bold;"></div>
-    </div>
-</div>
-
-<style>
-.correction-box{
-    padding:20px;
-    border:1px solid #ccc;
-
-    margin-top:20px;
-    background:#f9f9f9;
-    border-radius:8px;
 }
-.correction-box input, 
-.correction-box textarea{
-    width:100%;
-    padding:10px;
-    margin-top:5px;
-    margin-bottom:15px;
-    border:1px solid #ddd;
-    border-radius:5px;
+.iti__country, .iti__selected-dial-code{
+    color: #000 !important;
 }
-.correction-box button{
-    background:#0066ff;
-    color:#fff;
-    border:none;
-    padding:12px 20px;
-    border-radius:6px;
-    cursor:pointer;
+.iti--allow-dropdown{
+    width: 100%
 }
 </style>
-
-
-
 
 <footer class="footer-dark main-footer overflow-hidden position-relative pt-5">
 
@@ -159,7 +88,7 @@ $csrf_token = $_SESSION['csrf_token'];
 
                     </div>
 
-                    <div class="col-md-4 text-white text-center text-md-start mt-3 mt-md-0">
+                    <div class="col-md-10 text-white text-center text-md-start mt-3 mt-md-0">
 
                         <h4>Subscribe Now</h4>
 
@@ -171,7 +100,7 @@ $csrf_token = $_SESSION['csrf_token'];
 
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-12">
 
                         <div class="row">
 
@@ -189,15 +118,15 @@ $csrf_token = $_SESSION['csrf_token'];
 
 
 
-                            <!-- Phone Input -->
+                            <!-- Phone Input with Country Code Mask -->
 
                             <div class="col-12 col-md-4">
 
                                 <div class="newsletter position-relative mt-3">
 
-                                    <input type="tel" id="phoneInput" class="form-control" placeholder="Your Number..." required maxlength="10" pattern="[0-9]{10}">
-
-                                    <div id="merrmsg"></div>
+                                
+                                <input id="phone" type="tel" class="form-control" required >
+                                    <div id="merrmsg" class="small text-danger mt-1" role="alert" aria-live="polite"></div>
 
                                 </div>
 
@@ -209,9 +138,9 @@ $csrf_token = $_SESSION['csrf_token'];
 
                             <div class="col-12 col-md-4">
 
-                                <div class="newsletter position-relative mt-3">
+                                <div class="newsletter position-relative mt-4">
 
-                                    <button type="button" id="submitForm" class="form-control" style="color: white;">
+                                    <button type="button" id="submitForm" class="btn btn-secondary">
 
                                         Submit
 
@@ -251,9 +180,7 @@ $csrf_token = $_SESSION['csrf_token'];
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=25">Athara Sthalams</a></h5>
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="abroad.php">Abroad Temples</a></h5>
-
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="saints.php?id=10">Alwars</a></h5>
+                   
 
                     <h5 class="fw-bold mb-4"> <a target="_blank" href="iconic-category-details.php?id=54">Aditya Temples</a></h5>
 
@@ -261,15 +188,14 @@ $csrf_token = $_SESSION['csrf_token'];
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=36">Divya Desams</a></h5>
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=57">Durga Aalayams by Sage Parasurma</a></h5>
+                    <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=57">Durga Aalayams</a></h5>
 
                     <!-- <h5 class="fw-bold mb-4">Durga Aalayams by Sage Parasurma</h5> -->
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="saints.php?id=6">Hindu Ashrams</a></h5>
-
+ 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=1"> Jyorthirlinga Temples</a></h5>
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="mystery.php">Mystery Temples</a></h5>
+ 
 
                 </div>
 
@@ -277,14 +203,13 @@ $csrf_token = $_SESSION['csrf_token'];
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=50">Muktishetras</a></h5>
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="mantras.php">Mantras & Slokas</a></h5>
+                    
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=38">Nava Tirupati Temples</a></h5>
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=19">Nava Puliyur Temples</a></h5>
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=18">Nakshatra Temples & Trees</a></h5>
-
+ 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=17">Navagraha Parihara Temples</a></h5>
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=4">Narasimha Skhetras</a></h5>
@@ -315,7 +240,7 @@ $csrf_token = $_SESSION['csrf_token'];
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=28">Paadal Petra Sthalams</a></h5>
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="saints.php?id=11">River Goddess</a></h5>
+ 
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="https://saikalpa.com/"></a>Shiridi Sai Temples</h5>
 
@@ -341,17 +266,17 @@ $csrf_token = $_SESSION['csrf_token'];
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=48">Shivalayams</a></h5>
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="saints.php?id=5">Saints & Poets</a></h5>
+           
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="saints.php?id=7">Sacred Trees</a></h5>
+                  
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="saints.php?id=8">Sacred Mountains</a></h5>
+                     
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="temple.php">Temples in India</a></h5>
+                   
 
-                    <!-- <h5 class="fw-bold mb-4"><a target="_blank" href="">Tevaram Vaippu Sthalams</a></h5> -->
+                   
 
-                    <h5 class="fw-bold mb-4"><a target="_blank" href="saints.php?id=9">Vahana Gods</a></h5>
+                  
 
                     <h5 class="fw-bold mb-4"><a target="_blank" href="iconic-category-details.php?id=51">Village Dieties</a></h5>
 
@@ -545,12 +470,6 @@ $csrf_token = $_SESSION['csrf_token'];
         display:none;
     }
 }
-.btn-show-correction-form{
-    cursor: pointer;
-}
-.btn-show-correction-form:hover{
-    text-decoration:underline;
-}
 .sticky-download-btn {
     position: fixed;
     right: -62px;
@@ -624,95 +543,6 @@ ease;
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<script>
-
-    $(document).ready(function() {
-
-        $('#submitForm').click(function() {
-
-            const email = $('#emailInput').val().trim();
-
-            const phone = $('#phoneInput').val().trim();
-
-
-
-            // Validate inputs
-
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            const phonePattern = /^[0-9]{10}$/;
-
-
-
-            if (!email || !phone) {
-
-                toastr.error('Please fill in both email and phone number.');
-
-                return;
-
-            }
-
-
-
-            if (!emailPattern.test(email)) {
-
-                toastr.error('Please enter a valid email address.');
-
-                return;
-
-            }
-
-
-
-            if (!phonePattern.test(phone)) {
-
-                toastr.error('Please enter a valid 10-digit phone number.');
-
-                return;
-
-            }
-
-
-
-            // AJAX Request
-
-            $.ajax({
-
-                url: 'submit_email.php',
-
-                type: 'POST',
-
-                data: {
-
-                    email,
-
-                    phone
-
-                },
-
-                success: function(response) {
-
-                    $('#emailInput').val('');
-
-                    $('#phoneInput').val('');
-
-                    toastr.success(response);
-
-                },
-
-                error: function() {
-
-                    toastr.error('Subscription failed. Please try again.');
-
-                }
-
-            });
-
-        });
-
-    });
-
-</script>
 
 <script>
 
@@ -1061,19 +891,7 @@ function toggleTranslate() {
 
     <?php }?>
 
-$("#phoneInput").keypress(function (event) {
-
-if (event.which != 8 && event.which != 0 && (event.which < 48 || event.which > 57)) {
-
-  $("#merrmsg").html("Enter numbers only").show().fadeOut("slow");
-
-  return false;
-
-}
-
-});
-
- $(".ad-slider").owlCarousel({
+$(".ad-slider").owlCarousel({
         loop: true,
         margin: 10,
         nav: false,
@@ -1123,32 +941,129 @@ $(document).ready(function(){
 </script>
 
 <script>
-$("#correctionForm").on("submit", function(e){
-    e.preventDefault();
+$(function(){
+    var correctionModal = document.getElementById("correctionModal");
+    if (correctionModal) {
+        correctionModal.addEventListener("show.bs.modal", function(){
+            $("#correctionResponse").html("");
+        });
+    }
+    $(document).on("submit", "#correctionForm", function(e){
+        e.preventDefault();
+        var $form = $(this);
+        var $response = $("#correctionResponse");
+        var actionUrl = $form.attr("data-action") || "correction_submit.php";
+        $response.html("");
 
-    $.ajax({
-        url: "correction_submit.php",
-        type: "POST",
-        data: $(this).serialize(),
-        dataType: "json",
-        success: function(res){
-            if(res.status === "success"){
-                $("#correctionResponse").html("<span style='color:green;'>" + res.message + "</span>");
-                $("#correctionForm")[0].reset();
-            } else {
-                $("#correctionResponse").html("<span style='color:red;'>" + res.message + "</span>");
+        $.ajax({
+            url: actionUrl,
+            type: "POST",
+            data: $form.serialize(),
+            dataType: "json",
+            success: function(res){
+                if(res && res.status === "success"){
+                    $response.html("<span style='color:green;'>" + (res.message || "Submitted successfully.") + "</span>");
+                    $form[0].reset();
+                    if (correctionModal) {
+                        var modal = bootstrap.Modal.getInstance(correctionModal);
+                        if (modal) setTimeout(function(){ modal.hide(); }, 1500);
+                    }
+                } else {
+                    $response.html("<span style='color:red;'>" + (res && res.message ? res.message : "Something went wrong.") + "</span>");
+                }
+            },
+            error: function(xhr, status, err){
+                $response.html("<span style='color:red;'>Request failed. Please try again or check your connection.</span>");
+                console.error("Correction form error:", status, err, xhr.responseText);
             }
-        }
+        });
     });
 });
-$("body").on("click", '.btn-show-correction-form',function(e){
-    $("#correctionForm").slideToggle();
-})
-
-
-
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"></script>
 
+<script>
+$(document).ready(function() {
+  var phoneInput = document.querySelector("#phone");
+  var iti = null;
+  if (phoneInput && window.intlTelInput) {
+    iti = window.intlTelInput(phoneInput, {
+      initialCountry: "in",
+      separateDialCode: true,
+      preferredCountries: ["in", "us", "gb", "ae", "au", "sa"],
+      utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/js/utils.js"
+    });
+  }
+
+  $('#submitForm').on('click', function(e) {
+    e.preventDefault();
+
+    var email = $('#emailInput').val().trim();
+    var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    $('#merrmsg').html('').hide();
+
+    // Email validation
+    if (!email) {
+      toastr.error('Please enter your email.');
+      $('#emailInput').focus();
+      return false;
+    }
+    if (!emailPattern.test(email)) {
+      toastr.error('Please enter a valid email address.');
+      $('#emailInput').focus();
+      return false;
+    }
+
+    // Phone validation (use intl-tel-input if available, else fallback)
+    var fullPhone = '';
+    if (iti) {
+      try {
+        if (!iti.isValidNumber()) {
+          $('#merrmsg').html('Please enter a valid phone number with country code.').show();
+          toastr.error('Please enter a valid phone number.');
+          if (phoneInput) phoneInput.focus();
+          return false;
+        }
+        fullPhone = iti.getNumber().replace(/\D/g, '');
+      } catch (err) {
+        fullPhone = (phoneInput && phoneInput.value) ? phoneInput.value.replace(/\D/g, '') : '';
+      }
+    } else {
+      var raw = (phoneInput && phoneInput.value) ? phoneInput.value.replace(/\D/g, '') : '';
+      if (raw.length < 8 || raw.length > 15) {
+        $('#merrmsg').html('Please enter a valid phone number (8–15 digits).').show();
+        toastr.error('Please enter a valid phone number.');
+        if (phoneInput) phoneInput.focus();
+        return false;
+      }
+      fullPhone = raw;
+    }
+
+    if (!fullPhone || fullPhone.length < 10) {
+      $('#merrmsg').html('Please enter a valid phone number.').show();
+      toastr.error('Please enter a valid phone number.');
+      return false;
+    }
+
+    $.ajax({
+      url: 'submit_email.php',
+      type: 'POST',
+      data: { email: email, phone: fullPhone },
+      success: function(response) {
+        $('#emailInput').val('');
+        if (iti) iti.setNumber('');
+        $('#merrmsg').html('').hide();
+        toastr.success(response);
+      },
+      error: function() {
+        toastr.error('Subscription failed. Please try again.');
+      }
+    });
+    return false;
+  });
+});
+</script>
 </body>
 
 

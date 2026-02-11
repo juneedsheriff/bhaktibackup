@@ -10,6 +10,14 @@ include_once './app/class/XssClean.php';
 
 $xssClean = new xssClean();
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+$csrf_token = $_SESSION['csrf_token'];
+
 ?>
 
 <!doctype html>
@@ -65,7 +73,8 @@ $xssClean = new xssClean();
 <link href="assets/css/custom.css" rel="stylesheet">
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.2.1/css/intlTelInput.css"/>
 <style>
 
 html, body {
@@ -340,16 +349,22 @@ while ($row = mysqli_fetch_assoc($result)) {
 usort($menuItems, function ($a, $b) {
     return strcasecmp($a['title'], $b['title']);
 });
-?>
 
+// Current page for active nav state (script name only, e.g. index.php)
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
 <div id="mySidenav" class="sidenav download">
 
     <a href="javascript:void(0)" class="closebtn mt-1" onclick="closeNav()">&times;</a>
 
-    <?php foreach ($menuItems as $item): ?>
+    <?php foreach ($menuItems as $item):
+        $item_script = basename(parse_url($item['url'], PHP_URL_PATH));
+        $sidenav_active = ($item_script === $current_page) ? ' active' : '';
+        $sidenav_class = trim((isset($item['class']) ? $item['class'] : '') . $sidenav_active);
+    ?>
         <a 
-            href="<?php echo $item['url']; ?>"
-            class="<?php echo isset($item['class']) ? $item['class'] : ''; ?>"
+            href="<?php echo htmlspecialchars($item['url']); ?>"
+            class="<?php echo $sidenav_class; ?>"
         >
             <?php echo htmlspecialchars($item['title']); ?>
         </a>
@@ -442,7 +457,7 @@ usort($menuItems, function ($a, $b) {
 
                     <li class="nav-item dropdown">
 
-                        <a class="nav-link active" href="index.php">
+                        <a class="nav-link<?php echo ($current_page === 'index.php') ? ' active' : ''; ?>" href="index.php">
 
                             Home
 
@@ -452,7 +467,7 @@ usort($menuItems, function ($a, $b) {
 
                     <li class="nav-item dropdown">
 
-                        <a class="nav-link dropdown-toggle material-ripple" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle material-ripple<?php echo (in_array($current_page, ['temples-in-india.php', 'abroad.php'], true)) ? ' active' : ''; ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 
                             <i class="typcn typcn-weather-stormy top-menu-icon"></i>Temples
 
@@ -460,9 +475,9 @@ usort($menuItems, function ($a, $b) {
 
                         <ul class="dropdown-menu">
 
-                            <li><a class="dropdown-item" href="temples-in-india.php">Temples In India</a></li>
+                            <li><a class="dropdown-item<?php echo ($current_page === 'temples-in-india.php') ? ' active' : ''; ?>" href="temples-in-india.php">Temples In India</a></li>
 
-                            <li><a class="dropdown-item" href="abroad.php">Temples In Abroad</a></li>
+                            <li><a class="dropdown-item<?php echo ($current_page === 'abroad.php') ? ' active' : ''; ?>" href="abroad.php">Temples In Abroad</a></li>
 
                             <!-- <li><a class="dropdown-item" href="iconic.php">Iconic Temples</a></li> -->
 
@@ -472,7 +487,7 @@ usort($menuItems, function ($a, $b) {
 
                     <li class="nav-item dropdown">
 
-                        <a class="nav-link" href="iconic-category.php">
+                        <a class="nav-link<?php echo ($current_page === 'iconic-category.php' || $current_page === 'iconic.php') ? ' active' : ''; ?>" href="iconic-category.php">
 
                             Iconic Temples
 
@@ -482,7 +497,7 @@ usort($menuItems, function ($a, $b) {
 
                     <li class="nav-item dropdown">
 
-                        <a class="nav-link" href="mantras-new.php">
+                        <a class="nav-link<?php echo ($current_page === 'mantras-new.php') ? ' active' : ''; ?>" href="mantras-new.php">
 
                             Mantras&nbsp;&amp;&nbsp;Stotras
 
@@ -492,7 +507,7 @@ usort($menuItems, function ($a, $b) {
 
                     <li class="nav-item">
 
-                        <a class="nav-link" href="mystery.php">Mystery&nbsp;Temples</a>
+                        <a class="nav-link<?php echo ($current_page === 'mystery.php') ? ' active' : ''; ?>" href="mystery.php">Mystery&nbsp;Temples</a>
 
                     </li>
 
@@ -508,7 +523,7 @@ usort($menuItems, function ($a, $b) {
 
                     <li class="nav-item">
 
-                        <a class="nav-link" href="findmylocation.php">Nearby Temples</a>
+                        <a class="nav-link<?php echo ($current_page === 'findmylocation.php') ? ' active' : ''; ?>" href="findmylocation.php">Nearby Temples</a>
 
                     </li>
 
@@ -584,16 +599,162 @@ function addLang($url, $lang) {
     return $url . (strpos($url, '?') === false ? '?' : '&') . "lang=" . $lang;
 }
 ?>
-<a href="//bhakti-v1.webtechsoftwaresolutions.com/?lang=en">A (EN)</a> /
-    <a href="//bhakti-v1.webtechsoftwaresolutions.com/?lang=hi">अ (HI)</a> /
-    <a href="//bhakti-v1.webtechsoftwaresolutions.com/?lang=kn">ಅ (KN)</a> /
-    <a href="//bhakti-v1.webtechsoftwaresolutions.com/?lang=ml">അ (ML)</a> /
-    <a href="//bhakti-v1.webtechsoftwaresolutions.com/?lang=bn">অ (BN)</a> /
-    <a href="//bhakti-v1.webtechsoftwaresolutions.com/?lang=ta">அ (TA)</a> /
-    <a href="//bhakti-v1.webtechsoftwaresolutions.com/?lang=te">అ (TE)</a>
+<a href="<?php echo htmlspecialchars(addLang($current_url, 'en')); ?>">A (EN)</a> /
+    <a href="<?php echo htmlspecialchars(addLang($current_url, 'hi')); ?>">अ (HI)</a> /
+    <a href="<?php echo htmlspecialchars(addLang($current_url, 'kn')); ?>">ಕ (KN)</a> /
+    <a href="<?php echo htmlspecialchars(addLang($current_url, 'ml')); ?>">അ (ML)</a> /
+    <a href="<?php echo htmlspecialchars(addLang($current_url, 'bn')); ?>">অ (BN)</a> /
+    <a href="<?php echo htmlspecialchars(addLang($current_url, 'ta')); ?>">அ (TA)</a> /
+    <a href="<?php echo htmlspecialchars(addLang($current_url, 'te')); ?>">అ (TE)</a>
     </p>
     </div>
     </div>
 </section>
+
+<?php
+// Build correction form URL so it works on localhost and live (same folder as current page)
+$script_dir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+if ($script_dir === '' || $script_dir === '.') {
+    $correction_form_action = 'correction_submit.php';
+} else {
+    $correction_form_action = rtrim($script_dir, '/') . '/correction_submit.php';
+}
+?>
+<div class="correction-box">
+    <div class="container">
+        <a class="btn-show-correction-form" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#correctionModal">Please send your corrections</a>
+    </div>
+</div>
+<!-- Correction form modal -->
+<div class="modal fade" id="correctionModal" tabindex="-1" aria-labelledby="correctionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="correctionModalLabel">Send your corrections</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="correctionForm" data-action="<?php echo htmlspecialchars($correction_form_action); ?>">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
+                    <input type="hidden" name="page_url" id="page_url" value="<?php echo htmlspecialchars($_SERVER['REQUEST_URI'] ?? ''); ?>">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" name="user_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="user_email" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="user_phone" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Correction Details</label>
+                        <textarea name="correction_details" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <div id="correctionResponse" class="mb-3 fw-bold"></div>
+                    <button type="submit" class="btn btn-primary">Submit Correction</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.correction-box{
+    padding:20px;
+    border-bottom:1px solid #e3e1e1;
+    border-top:1px solid #e3e1e1;
+    margin-top:20px;
+    background:#f9f9f9;
+     
+}
+.correction-box input,
+.correction-box textarea{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
+    border-radius:5px;
+}
+.correction-box button{
+    background:#0066ff;
+    color:#fff;
+    border:none;
+    padding:12px 20px;
+    border-radius:6px;
+    cursor:pointer;
+}
+.btn-show-correction-form{
+    cursor: pointer;
+    background:#fb523a;
+    padding:10px 20px;
+    border-radius:6px;
+    color:#fff;
+    text-decoration:none;
+}
+.btn-show-correction-form:hover{
+    background:#c53824
+}
+/* Keep correction modal above backdrop and other overlays (sticky bars, etc.) */
+#correctionModal.modal {
+    z-index: 9998;
+}
+#correctionModal .modal-dialog {
+    z-index: 9999;
+    position: relative;
+}
+body > .modal-backdrop {
+    z-index: 9997;
+}
+/* Correction form: left-align text and custom form-control style */
+#correctionModal .modal-header,
+#correctionModal .modal-body,
+#correctionModal .modal-title,
+#correctionModal .form-label,
+#correctionModal .form-control,
+#correctionModal #correctionResponse,
+#correctionModal .btn {
+    text-align: left;
+}
+#correctionModal .modal-header {
+    border-bottom: 1px solid #dee2e6;
+}
+#correctionModal .form-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    color: #333;
+}
+#correctionModal .form-control {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #8d9399;
     
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+#correctionModal .form-control:focus {
+    border-color: #fb523a;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(251, 82, 58, 0.2);
+}
+#correctionModal .form-control::placeholder {
+    color: #6c757d;
+}
+#correctionModal textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+#correctionModal .btn-primary {
+    text-align: left;
+}
+</style>
 

@@ -4673,7 +4673,7 @@ hr {
     padding: 10px 63px 10px 20px;
     -webkit-box-shadow: 0px 0px 40px rgb(29 58 83 / 10%);
     box-shadow: 0px 0px 40px rgb(29 58 83 / 10%);
-    background-color: transparent;
+    
     border: 1px solid rgba(0255, 255, 255, .1);
     border-radius: 35px;
 }
@@ -4682,25 +4682,9 @@ hr {
     border-color: #ff8776;
 }
 
-.newsletter .form-control::-moz-placeholder {
-    color: var(--bs-white);
-}
-
-.newsletter .form-control::-webkit-input-placeholder {
-    color: var(--bs-white);
-}
-
-.newsletter .form-control:-ms-input-placeholder {
-    color: var(--bs-white);
-}
-
-.newsletter .form-control::-ms-input-placeholder {
-    color: var(--bs-white);
-}
-
-.newsletter .form-control::placeholder {
-    color: var(--bs-white);
-}
+ 
+ 
+ 
 
 .newsletter .search-btn {
     right: 10px;
