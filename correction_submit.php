@@ -64,7 +64,7 @@ if ($DatabaseCo->dbLink->query($sql) === TRUE) {
     // --------------------------------------
     // SEND EMAIL TO ADMIN
     // --------------------------------------
-    $admin_email = "sarveshverma.9000@gmail.com";
+    $admin_email = "avanivr9@gmail.com";
     $subject     = "New Correction Submitted - $page_url";
 
     $emailMsg = "

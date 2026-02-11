@@ -11,7 +11,7 @@ $xssClean = new xssClean();
 if (isset($_POST['email']) && isset($_POST['phone'])) {
     // Clean and validate the email
     $email = $DatabaseCo->dbLink->real_escape_string(trim($_POST['email']));
-    $phone = $DatabaseCo->dbLink->real_escape_string(trim($_POST['phone']));
+    $phoneRaw = preg_replace('/\D/', '', trim($_POST['phone']));
 
     // Server-side email validation
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -19,11 +19,12 @@ if (isset($_POST['email']) && isset($_POST['phone'])) {
         exit;
     }
 
-    // Server-side phone number validation
-    if (!preg_match('/^[0-9]{10}$/', $phone)) {
-        echo "Invalid phone number.";
+    // Phone: digits only, 10–15 (with country code)
+    if (strlen($phoneRaw) < 10 || strlen($phoneRaw) > 15 || !ctype_digit($phoneRaw)) {
+        echo "Invalid phone number. Enter 10–15 digits with country code.";
         exit;
     }
+    $phone = $DatabaseCo->dbLink->real_escape_string($phoneRaw);
 
     // Insert email and phone into the database
     $sql = "INSERT INTO subscribe (email, phone) VALUES ('$email', '$phone')";
