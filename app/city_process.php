@@ -10,32 +10,40 @@ $response = ['successStatus' => false, 'responseMessage' => ''];
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ensure the database connection is included
-    $action = $_POST['action']; // Get the action ('insert' or 'update')
-
-    $city_name = trim($_POST['city_name']);
-    $country_code = strtoupper(trim($_POST['country_code'])); // Uppercase for consistency
-    $state_code = strtoupper(trim($_POST['state_code'])); // Uppercase for consistency
-    $country_status = $_POST['status'];
-    $city_id = $_POST['city_id'] ?? null; // Only used for updates
-
-    // Validate country code length
-    if (strlen($country_code) !== 2) {
-        echo json_encode(['success' => false, 'message' => 'Country code must be exactly 2 characters.']);
+    $action = $_POST['action'] ?? '';
+    if ($action !== 'insert' && $action !== 'update') {
+        echo json_encode(['success' => false, 'message' => 'Invalid operation.']);
         exit;
     }
 
+    $city_name = trim($_POST['city_name']);
+    $country_id = isset($_POST['country_id']) ? intval($_POST['country_id']) : 0;
+    $state_code = strtoupper(trim($_POST['state_code'] ?? ''));
+    $country_status = $_POST['status'] ?? 'UNAPPROVED';
+    $city_id = isset($_POST['city_id']) && $_POST['city_id'] !== '' ? intval($_POST['city_id']) : null;
+
+    if ($country_id <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Please select a country.']);
+        exit;
+    }
+    if ($state_code === '') {
+        echo json_encode(['success' => false, 'message' => 'Please select a state.']);
+        exit;
+    }
+
+    // Get country_code from country table for display/reference
+    $codeResult = $DatabaseCo->dbLink->query("SELECT country_code FROM country WHERE country_id = " . $country_id);
+    $country_code = ($codeResult && $codeRow = $codeResult->fetch_object()) ? $codeRow->country_code : '';
+
     try {
-        if ($action === 'update') {
-            // Prepare update statement
-            $sql = "UPDATE city SET city_name = ?, country_code = ?, status = ?, state_code = ? WHERE city_id = ?";
+        if ($action === 'update' && $city_id) {
+            $sql = "UPDATE city SET city_name = ?, country_id = ?, country_code = ?, status = ?, state_code = ? WHERE city_id = ?";
             $stmt = $DatabaseCo->dbLink->prepare($sql);
-            $stmt->bind_param("sssii", $city_name, $country_code, $country_status, $state_code, $city_id);
+            $stmt->bind_param("sisssi", $city_name, $country_id, $country_code, $country_status, $state_code, $city_id);
         } elseif ($action === 'insert') {
-            // Prepare insert statement
-            $sql = "INSERT INTO city (city_name, country_code, status, state_code) VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO city (city_name, country_id, country_code, status, state_code) VALUES (?, ?, ?, ?, ?)";
             $stmt = $DatabaseCo->dbLink->prepare($sql);
-            $stmt->bind_param("ssss", $city_name, $country_code, $country_status, $state_code);
+            $stmt->bind_param("sisss", $city_name, $country_id, $country_code, $country_status, $state_code);
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid operation.']);
             exit;

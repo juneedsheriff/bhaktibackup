@@ -1,9 +1,9 @@
 <?php ob_start();
 include_once './includes/header.php';
-if ($_REQUEST['state_id']) {
-    $state = $_REQUEST['state_id'];
+if (!empty($_REQUEST['state_code'])) {
+    $state = $DatabaseCo->dbLink->real_escape_string($_REQUEST['state_code']);
 } else {
-    $state = "4035";
+    $state = '';
 }
 error_reporting(1);
 if (isset($_POST['delete_now']) && !empty($_POST['del_c'])) {
@@ -53,12 +53,12 @@ if (isset($_POST['delete_now']) && !empty($_POST['del_c'])) {
    <select class="form-select" id="countryDropdown">
    <option value="">Select state</option>
    <?php
-   $select = "SELECT * FROM `state` ORDER BY `state_id` ASC";
+   $select = "SELECT * FROM `state` ORDER BY state_name ASC";
    $SQL_STATEMENT = mysqli_query($DatabaseCo->dbLink, $select);
    if (mysqli_num_rows($SQL_STATEMENT) != 0) {
        while ($Row = mysqli_fetch_object($SQL_STATEMENT)) { ?>
-           <option value="<?php echo htmlspecialchars($Row->state_id); ?>"<?php echo $Row->state_id==$state?'selected':'';?>>
-               <?php echo $Row->state_name; ?>
+           <option value="<?php echo htmlspecialchars($Row->state_code); ?>"<?php echo $Row->state_code==$state?'selected':'';?>>
+               <?php echo htmlspecialchars($Row->state_name); ?>
            </option>
        <?php }
    } ?>
@@ -81,9 +81,9 @@ if (isset($_POST['delete_now']) && !empty($_POST['del_c'])) {
                         <tr>
                             <th class="w-5">Sno</th>
                             <th class="w-5">City Id</th>
-                            <th class="w-15">State ID</th>
-                            <th class="w-5">Country Code </th>
-                            <!--<th class="w-5">Country ID </th>-->
+                            <th class="w-15">State Code</th>
+                            <th class="w-5">Country ID</th>
+                            <th class="w-5">Country Code</th>
                             <th class="w-25">City Name</th>
                             <th class="w-20">Status</th>
                             <th class="w-5">Action</th>
@@ -93,7 +93,7 @@ if (isset($_POST['delete_now']) && !empty($_POST['del_c'])) {
                         <?php  // Example: State ID to filter cities, change as needed
 
                         $select = "SELECT * FROM `city` 
-           WHERE city_id != '0' AND state_id = '$state' 
+           WHERE city_id != '0' " . ($state !== '' ? "AND state_code = '$state'" : "") . " 
            ORDER BY city_id DESC";
 
                         $SQL_STATEMENT = mysqli_query($DatabaseCo->dbLink, $select);
@@ -101,7 +101,7 @@ if (isset($_POST['delete_now']) && !empty($_POST['del_c'])) {
                         if ($num_rows != 0) {
                             $i = 1;
                             while ($Row = mysqli_fetch_object($SQL_STATEMENT)) {
-                                $sql3 = mysqli_query($DatabaseCo->dbLink, "SELECT state_name FROM `state` WHERE state_code='" . $Row->state_code . "'");
+                                $sql3 = mysqli_query($DatabaseCo->dbLink, "SELECT state_name FROM `state` WHERE state_code='" . $DatabaseCo->dbLink->real_escape_string($Row->state_code) . "'");
                                 $res3 = mysqli_fetch_object($sql3);
                         ?>
                                 <tr>
@@ -109,9 +109,9 @@ if (isset($_POST['delete_now']) && !empty($_POST['del_c'])) {
                                         $i++; ?></td>
 
                                     <td><?php echo $Row->city_id; ?></td>
-                                    <td><?php echo $Row->state_id; ?></td>
-                                    <td><?php echo $Row->country_code; ?></td>
-                                    <!--<td><?php echo $Row->country_id; ?></td>-->
+                                    <td><?php echo htmlspecialchars($Row->state_code); ?></td>
+                                    <td><?php echo (int)($Row->country_id ?? 0); ?></td>
+                                    <td><?php echo htmlspecialchars($Row->country_code ?? ''); ?></td>
                                     <td><?php echo $Row->city_name; ?></td>
                                     <td><?php echo $Row->status; ?></td>
 
@@ -258,7 +258,7 @@ include_once './includes/footer.php';
     console.log(selectedValue);
     if (selectedValue) {
       // Use correct string interpolation for the URL
-      window.location.href = `city.php?state_id=${selectedValue}`;
+      window.location.href = `city.php?state_code=${encodeURIComponent(selectedValue)}`;
     }
   });
 </script>

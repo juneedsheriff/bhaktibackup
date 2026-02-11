@@ -5,14 +5,15 @@ error_reporting(1);
 
 
 
-if ($_REQUEST['city_id'] > 0) {
+if (!empty($_REQUEST['city_id']) && intval($_REQUEST['city_id']) > 0) {
     $titl = "Update ";
-    $select = "SELECT * FROM `city` WHERE city_id ='" . $_REQUEST['city_id'] . "'"; //echo $select;
+    $select = "SELECT * FROM `city` WHERE city_id ='" . $DatabaseCo->dbLink->real_escape_string($_REQUEST['city_id']) . "'";
     $SQL_STATEMENT = mysqli_query($DatabaseCo->dbLink, $select);
     $Row = mysqli_fetch_object($SQL_STATEMENT);
-  } else {
+} else {
     $titl = "";
-  }
+    $Row = (object)['city_id' => '', 'city_name' => '', 'country_id' => '', 'country_code' => '', 'state_code' => '', 'status' => 'UNAPPROVED'];
+}
 ?>
 <div class="body-content">
     <div class="decoration blur-2"></div>
@@ -49,21 +50,15 @@ if ($_REQUEST['city_id'] > 0) {
                             <div class="">
                               <label class="required fw-medium mb-2">Country</label>
 
-                              <select class="form-select mb-3" name="country_code" id="country_code" required>
-                    <option disabled>Select Country</option>
+                              <select class="form-select mb-3" name="country_id" id="country_id" required>
+                    <option value="">Select Country</option>
                     <?php
-                    // Fetch countries from the database
                     $Vselect = "SELECT * FROM country ORDER BY country_name";
                     $VSQL_STATEMENT = mysqli_query($DatabaseCo->dbLink, $Vselect);
-
-                    // Loop through each country and mark the selected one
                     while ($VRow = mysqli_fetch_object($VSQL_STATEMENT)) {
-                        // Combine the country code with the name (e.g., "US - United States")
-                        $displayText = "{$VRow->country_name}";
-
-                        // Check if this is the selected country during edit
-                        $selected = ($VRow->country_code == $Row->country_code) ? 'selected' : '';
-                        echo "<option value='{$VRow->country_code}' $selected>$displayText</option>";
+                        $displayText = htmlspecialchars($VRow->country_name);
+                        $selected = (isset($Row->country_id) && $VRow->country_id == $Row->country_id) ? 'selected' : '';
+                        echo "<option value='" . (int)$VRow->country_id . "' $selected>$displayText</option>";
                     }
                     ?>
                 </select>
@@ -76,20 +71,14 @@ if ($_REQUEST['city_id'] > 0) {
                               <label class="required fw-medium mb-2">State</label>
 
                               <select class="form-select mb-3" name="state_code" id="state_code" required>
-                    <option disabled>Select State</option>
+                    <option value="">Select State</option>
                     <?php
-                    // Fetch countries from the database
                     $Vselect = "SELECT * FROM `state` ORDER BY state_name";
                     $VSQL_STATEMENT = mysqli_query($DatabaseCo->dbLink, $Vselect);
-
-                    // Loop through each country and mark the selected one
                     while ($VRow = mysqli_fetch_object($VSQL_STATEMENT)) {
-                        // Combine the country code with the name (e.g., "US - United States")
-                        $displayText = "{$VRow->state_name}";
-
-                        // Check if this is the selected country during edit
-                        $selected = ($VRow->state_id == $Row->state_id) ? 'selected' : '';
-                        echo "<option value='{$VRow->state_code}' $selected>$displayText</option>";
+                        $displayText = $VRow->state_name;
+                        $selected = (isset($Row->state_code) && $VRow->state_code == $Row->state_code) ? 'selected' : '';
+                        echo "<option value='" . htmlspecialchars($VRow->state_code) . "' $selected>$displayText</option>";
                     }
                     ?>
                 </select>
@@ -101,7 +90,7 @@ if ($_REQUEST['city_id'] > 0) {
                             <div class="form-group">
                                 <label for="country_name"><b>City Name</b></label>
                                 <input type="text" name="city_name" class="form-control" id="city_name"
-                                    placeholder="Enter State name" value="<?php echo $Row->city_name; ?>" required>
+                                    placeholder="Enter State name" value="<?php echo htmlspecialchars($Row->city_name ?? ''); ?>" required>
                             </div>
                         </div>
                      
@@ -109,11 +98,11 @@ if ($_REQUEST['city_id'] > 0) {
                             <label><b>Status</b></label>
                             <div class="radio">
                                 <input id="optionsRadios1" class="status" type="radio" value="APPROVED" name="status"
-                                    <?php echo ($Row->status === 'APPROVED') ? 'checked' : ''; ?>>
+                                    <?php echo (isset($Row->status) && $Row->status === 'APPROVED') ? 'checked' : ''; ?>>
                                 <label for="optionsRadios1"><b>Active</b></label>
 
                                 <input id="optionsRadios2" class="country_status" type="radio" value="UNAPPROVED" name="status"
-                                    <?php echo ($Row->status === 'UNAPPROVED') ? 'checked' : ''; ?>>
+                                    <?php echo (isset($Row->status) && $Row->status === 'UNAPPROVED') ? 'checked' : ''; ?>>
                                 <label for="optionsRadios2"><b>Inactive</b></label>
                             </div>
                         </div>
@@ -163,7 +152,7 @@ $(document).ready(function () {
         let formData = {
             action: action,
             city_name: $('#city_name').val(),
-            country_code: $('#country_code').val(),
+            country_id: $('#country_id').val(),
             state_code: $('#state_code').val(),
             status: $('input[name="status"]:checked').val()
         };
